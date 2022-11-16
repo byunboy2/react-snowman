@@ -65,7 +65,7 @@ function Snowman({
         <button
             key={ltr}
             value={ltr}
-            onClick={handleGuess}
+            onClick={nWrong <= maxWrong && handleGuess}
             disabled={guessedLetters.has(ltr)}
         >
           {ltr}
@@ -75,7 +75,7 @@ function Snowman({
 
   return (
       <div className="Snowman">
-        <img src={(images)[nWrong]} alt={nWrong} />
+        <img src={(images)[nWrong<=maxWrong ? nWrong : maxWrong]} alt={nWrong} />
         <p className="Snowman-word">{guessedWord()}</p>
         <p>{generateButtons()}</p>
       </div>
