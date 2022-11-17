@@ -8,7 +8,7 @@ import img3 from "./3.png";
 import img4 from "./4.png";
 import img5 from "./5.png";
 import img6 from "./6.png";
-
+import { randomWord, ENGLISH_WORDS } from "./words.js";
 
 /** Snowman game: plays hangman-style game with a melting snowman.
  *
@@ -24,23 +24,22 @@ import img6 from "./6.png";
  */
 
 function Snowman({
-      images=[img0, img1, img2, img3, img4, img5, img6],
-      words=["apple"],
-      maxWrong=6,
-    }) {
+  images = [img0, img1, img2, img3, img4, img5, img6],
+  maxWrong = 6,
+}) {
   /** by default, allow 6 guesses and use provided gallows images. */
 
   const [nWrong, setNWrong] = useState(0);
   const [guessedLetters, setGuessedLetters] = useState(() => new Set());
-  const [answer, setAnswer] = useState((words)[0]);
+  const [answer, setAnswer] = useState(randomWord(ENGLISH_WORDS));
 
   /** guessedWord: show current-state of word:
    if guessed letters are {a,p,e}, show "app_e" for "apple"
    */
   function guessedWord() {
     return answer
-        .split("")
-        .map(ltr => (guessedLetters.has(ltr) ? ltr : "_"));
+      .split("")
+      .map(ltr => (guessedLetters.has(ltr) ? ltr : "_"));
   }
 
   /** handleGuess: handle a guessed letter:
@@ -62,24 +61,43 @@ function Snowman({
   /** generateButtons: return array of letter buttons to render */
   function generateButtons() {
     return "abcdefghijklmnopqrstuvwxyz".split("").map(ltr => (
-        <button
-            key={ltr}
-            value={ltr}
-            onClick={nWrong <= maxWrong && handleGuess}
-            disabled={guessedLetters.has(ltr)}
-        >
-          {ltr}
-        </button>
+      <button
+        key={ltr}
+        value={ltr}
+        onClick={nWrong <= maxWrong && handleGuess}
+        disabled={guessedLetters.has(ltr)}
+      >
+        {ltr}
+      </button>
     ));
   }
 
+
+  /** Reset the game*/
+  function handleReset() {
+    setNWrong(0);
+    setGuessedLetters(new Set());
+    setAnswer(randomWord(ENGLISH_WORDS));
+  }
+
   return (
-      <div className="Snowman">
-        <img src={(images)[nWrong<=maxWrong ? nWrong : maxWrong]} alt={nWrong} />
-        <p className="Snowman-word">{guessedWord()}</p>
-        <p>{generateButtons()}</p>
-      </div>
+    <div className="Snowman">
+      <img src={(images)[nWrong <= maxWrong ? nWrong : maxWrong]} alt={nWrong} />
+      <p className="Snowman-word">{guessedWord()}</p>
+      {
+        nWrong < maxWrong ?
+          <p>{generateButtons()}</p> :
+          <div>
+            <p className="lose">"You lose!"</p>
+            <p>The correct word was {answer}</p>
+          </div>
+      }
+      <button onClick={handleReset}>
+        Reset
+      </button>
+    </div >
   );
+
 }
 
 
